@@ -20,7 +20,7 @@ import javafx.stage.Stage
 class Game : Application() {
 
     companion object {
-        private const val WIDTH = 512
+        private const val WIDTH = 1024
         private const val HEIGHT = 512
     }
 
@@ -29,9 +29,6 @@ class Game : Application() {
     private lateinit var universe: Universe
 
     private var lastFrameTime: Long = System.nanoTime()
-
-    private var rec_x = 0.0
-    private var rec_y = 0.0
 
     // use a set so duplicates are not possible
     private val currentlyActiveKeys = mutableSetOf<KeyCode>()
@@ -59,12 +56,12 @@ class Game : Application() {
 
         val startButton = Button("Start")
         startButton.setOnMouseClicked {
-            rec_x += 20.0
+            // TODO
         }
 
         val stopButton = Button("Stop")
         stopButton.setOnMouseClicked {
-            rec_y += 20.0
+            // TODO
         }
 
         buttonsHBox.children.addAll(
@@ -77,6 +74,10 @@ class Game : Application() {
         prepareActionHandlers()
 
         graphicsContext = canvas.graphicsContext2D
+        // Canvas on click listener
+        canvas.setOnMouseClicked {
+            universe.changeStateForCell(it.x, it.y)
+        }
 
         // Main loop
         object : AnimationTimer() {

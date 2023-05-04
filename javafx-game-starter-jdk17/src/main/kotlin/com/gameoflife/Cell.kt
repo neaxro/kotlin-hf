@@ -9,12 +9,12 @@ enum class State(boolean: Boolean){
 }
 
 class Cell(
-    private val positionX: Double,
-    private val positionY: Double,
+    private val positionX: Int,
+    private val positionY: Int,
     state: State = State.Death,
 ): Renderable {
     companion object{
-        const val SIZE: Double = 20.0
+        const val SIZE: Int = 20
         val COLOR_ALIVE: Color = Color.BLACK
         val COLOR_DEATH: Color = Color.WHITE
     }
@@ -67,6 +67,6 @@ class Cell(
         }
 
         // Draw the cell
-        graphicsContext.fillRect(positionX, positionY, SIZE, SIZE)
+        graphicsContext.fillRect(positionX.toDouble(), positionY.toDouble(), SIZE.toDouble(), SIZE.toDouble())
     }
 }
