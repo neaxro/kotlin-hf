@@ -45,6 +45,7 @@ class Cell(
         }.sum()
 
         newState = when {
+            aliveNeighbours < 2 -> State.Death
             aliveNeighbours == 3 && state == State.Death -> State.Alive // Any dead cell with three live neighbours becomes a live cell.
             aliveNeighbours == 2 || aliveNeighbours == 3 -> State.Alive // Any live cell with two or three live neighbours survives.
             else -> State.Death                                         // All other live cells die in the next generation. Similarly, all other dead cells stay dead.

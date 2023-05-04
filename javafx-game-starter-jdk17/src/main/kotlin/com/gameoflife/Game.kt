@@ -8,6 +8,7 @@ import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.control.Button
+import javafx.scene.control.Slider
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
@@ -26,6 +27,8 @@ class Game : Application() {
     private lateinit var universe: Universe
 
     private var lastFrameTime: Long = System.nanoTime()
+    private var elapsedSeconds: Double = 0.0
+    private var simulateSleep: Double = 1.0     // Seconds
 
     // use a set so duplicates are not possible
     private val currentlyActiveKeys = mutableSetOf<KeyCode>()
@@ -97,7 +100,12 @@ class Game : Application() {
         graphicsContext.fillRect(0.0, 0.0, WIDTH.toDouble(), HEIGHT.toDouble())
 
         // perform world updates
-        universe.simulate()
+        elapsedSeconds += elapsedNanos * 10e-9
+        // println("[ELAPSED SECONDS] $elapsedSeconds")
+        if(elapsedSeconds > simulateSleep){
+            universe.simulate()
+            elapsedSeconds = 0.0
+        }
 
         // draw
         universe.drawCells(graphicsContext)
@@ -127,9 +135,18 @@ class Game : Application() {
             universe.clearUniverse()
         }
 
+        val simulateTimeSlider = Slider(0.5, 3.0, 1.0)
+        simulateTimeSlider.blockIncrement = 0.1
+        simulateTimeSlider.isShowTickLabels = true
+        simulateTimeSlider.isShowTickMarks = true
+        simulateTimeSlider.valueProperty().addListener { observable, oldValue, newValue ->
+            simulateSleep = simulateTimeSlider.value
+        }
+
         hBox.children.addAll(
             simulateButton,
             clearButton,
+            simulateTimeSlider,
         )
     }
 }

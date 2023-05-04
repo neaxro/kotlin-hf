@@ -49,7 +49,11 @@ class Universe(
         val cellIndex: Int = getIndexFromCellPos(posX, posY)
         println("\t--> [CELL INDEX] index: $cellIndex")
 
-        cells[cellIndex].invert()
+        try {
+            cells[cellIndex].invert()
+        } catch (e: Exception){
+            println("Clicked out of canvas...")
+        }
     }
 
     private fun getNeighbours(cellX: Int, cellY: Int): List<Cell> {
