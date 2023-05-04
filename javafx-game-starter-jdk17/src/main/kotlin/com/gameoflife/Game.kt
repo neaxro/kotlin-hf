@@ -13,13 +13,16 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
+import javafx.scene.text.Text
+import javafx.scene.text.TextAlignment
 import javafx.stage.Stage
+import javax.swing.GroupLayout.Alignment
 
 class Game : Application() {
 
     companion object {
-        private const val WIDTH = 1024
-        private const val HEIGHT = 512
+        private const val WIDTH = 1000
+        private const val HEIGHT = 500
     }
 
     private lateinit var mainScene: Scene
@@ -29,6 +32,7 @@ class Game : Application() {
     private var lastFrameTime: Long = System.nanoTime()
     private var elapsedSeconds: Double = 0.0
     private var simulateSleep: Double = 1.0     // Seconds
+    private val stepText: Text = Text(String.format("Steps: %d", 0))
 
     // use a set so duplicates are not possible
     private val currentlyActiveKeys = mutableSetOf<KeyCode>()
@@ -37,7 +41,7 @@ class Game : Application() {
         mainStage.title = "Game of life"
 
         // Create a Universe
-        universe = Universe(WIDTH, HEIGHT)
+        universe = Universe(WIDTH, HEIGHT, stepText)
 
         val borderPane = BorderPane()
 
@@ -135,18 +139,33 @@ class Game : Application() {
             universe.clearUniverse()
         }
 
+        val stepperButton = Button("Step")
+        stepperButton.setOnMouseClicked {
+            if(!universe.isSimulating){
+                universe.isSimulating = true
+                universe.simulate()
+                universe.isSimulating = false
+            }
+        }
+
+        val simulateTimerText = Text(String.format("%.1f", simulateSleep))
+
         val simulateTimeSlider = Slider(0.5, 3.0, 1.0)
         simulateTimeSlider.blockIncrement = 0.1
         simulateTimeSlider.isShowTickLabels = true
         simulateTimeSlider.isShowTickMarks = true
         simulateTimeSlider.valueProperty().addListener { observable, oldValue, newValue ->
             simulateSleep = simulateTimeSlider.value
+            simulateTimerText.text = String.format("%.1f", simulateSleep)
         }
 
         hBox.children.addAll(
             simulateButton,
             clearButton,
+            stepperButton,
             simulateTimeSlider,
+            simulateTimerText,
+            stepText
         )
     }
 }

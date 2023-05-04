@@ -1,22 +1,27 @@
 package com.gameoflife
 
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.text.Text
 import java.util.Random
 import kotlin.math.floor
+import kotlin.properties.Delegates
 
 class Universe(
     private val canvasWidth: Int,
     private val canvasHeight: Int,
+    private val stepText: Text? = null
 ) {
     private val cells = mutableListOf<Cell>()
     var isSimulating: Boolean = false
+    var simulatingStep: Long by Delegates.observable(0){property, oldValue, newValue ->
+        stepText?.text = String.format("Steps: %d", newValue)
+    }
 
     init {
         generateCells()
     }
 
     private fun generateCells(){
-        val random = Random()
         val numberInX: Int = floor(canvasWidth / Cell.SIZE.toDouble()).toInt()
         val numberInY: Int = floor(canvasHeight / Cell.SIZE.toDouble()).toInt()
 
@@ -25,7 +30,6 @@ class Universe(
                 cells.add(Cell(
                     positionX = Cell.SIZE * x,
                     positionY = Cell.SIZE * y,
-                    //state = if(random.nextFloat() < 0.35f) State.Alive else State.Death
                 ))
             }
         }
@@ -110,6 +114,7 @@ class Universe(
                 cell.invert()
             }
         }
+        simulatingStep = 0
     }
 
     fun simulate(){
@@ -129,5 +134,7 @@ class Universe(
         cells.forEach { cell ->
             cell.setNewState()
         }
+
+        simulatingStep++
     }
 }
