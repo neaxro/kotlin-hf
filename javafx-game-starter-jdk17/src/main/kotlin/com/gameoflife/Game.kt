@@ -26,6 +26,7 @@ class Game : Application() {
 
     private lateinit var mainScene: Scene
     private lateinit var graphicsContext: GraphicsContext
+    private lateinit var universe: Universe
 
     private var lastFrameTime: Long = System.nanoTime()
 
@@ -37,6 +38,9 @@ class Game : Application() {
 
     override fun start(mainStage: Stage) {
         mainStage.title = "Game of life"
+
+        // Create a Universe
+        universe = Universe(WIDTH, HEIGHT)
 
         val borderPane = BorderPane()
 
@@ -109,8 +113,7 @@ class Game : Application() {
         // perform world updates
 
         // draw
-        graphicsContext.fill = Color.AQUA
-        graphicsContext.fillRect(rec_x, rec_y, 30.0, 30.0)
+        universe.drawCells(graphicsContext)
 
         // display crude fps counter
         val elapsedMs = elapsedNanos / 1_000_000
