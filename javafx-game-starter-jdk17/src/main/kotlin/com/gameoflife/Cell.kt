@@ -9,8 +9,8 @@ enum class State(boolean: Boolean){
 }
 
 class Cell(
-    private val positionX: Int,
-    private val positionY: Int,
+    val positionX: Int,
+    val positionY: Int,
     state: State = State.Death,
 ): Renderable {
     companion object{
@@ -52,7 +52,7 @@ class Cell(
     }
 
     // Sets the new state based on the newState
-    fun changeState(){
+    fun setNewState(){
         state = newState
     }
 
