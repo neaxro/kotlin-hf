@@ -22,8 +22,8 @@ import javax.swing.GroupLayout.Alignment
 class Game : Application() {
 
     companion object {
-        private const val WIDTH = 1000
-        private const val HEIGHT = 500
+        const val WIDTH = 1000
+        const val HEIGHT = 500
     }
 
     private lateinit var mainScene: Scene
@@ -140,7 +140,7 @@ class Game : Application() {
 
         val simulateTimerText = Text(String.format("%.1f", simulateSleep))
 
-        val simulateTimeSlider = Slider(0.5, 3.0, 1.0)
+        val simulateTimeSlider = Slider(0.1, 4.0, 1.0)
         simulateTimeSlider.blockIncrement = 0.1
         simulateTimeSlider.isShowTickLabels = true
         simulateTimeSlider.isShowTickMarks = true

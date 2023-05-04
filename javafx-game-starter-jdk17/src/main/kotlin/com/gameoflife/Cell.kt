@@ -59,13 +59,27 @@ class Cell(
     override fun render(graphicsContext: GraphicsContext) {
         // Set the cell's color
         graphicsContext.fill = if(state == State.Alive){
-            COLOR_ALIVE
+            //COLOR_ALIVE
+            colorful(positionX, positionY)
         }
         else{
             COLOR_DEATH
         }
 
         // Draw the cell
-        graphicsContext.fillRect(positionX.toDouble(), positionY.toDouble(), SIZE.toDouble(), SIZE.toDouble())
+        graphicsContext.fillRect(positionX.toDouble(), positionY.toDouble(), SIZE.toDouble()-1, SIZE.toDouble()-1)
+    }
+
+    private fun colorful(posX: Int, posY: Int): Color{
+        val xColor = 1.0 / Game.WIDTH
+        val yColor = 1.0 / Game.HEIGHT
+
+        val col = Color.color(
+            (xColor * posX),
+            (yColor * posY),
+            0.6
+        )
+
+        return col
     }
 }
