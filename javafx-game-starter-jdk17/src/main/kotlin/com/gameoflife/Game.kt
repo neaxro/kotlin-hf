@@ -3,12 +3,17 @@ package com.gameoflife
 import javafx.animation.AnimationTimer
 import javafx.application.Application
 import javafx.event.EventHandler
+import javafx.geometry.Insets
 import javafx.scene.Group
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 
@@ -24,19 +29,47 @@ class Game : Application() {
 
     private var lastFrameTime: Long = System.nanoTime()
 
+    private var rec_x = 0.0
+    private var rec_y = 0.0
+
     // use a set so duplicates are not possible
     private val currentlyActiveKeys = mutableSetOf<KeyCode>()
 
     override fun start(mainStage: Stage) {
         mainStage.title = "Game of life"
 
-        val root = Group()
-        mainScene = Scene(root)
+        val borderPane = BorderPane()
+
+        mainScene = Scene(borderPane)
         mainStage.scene = mainScene
 
+        // Add canvas to the center of the BorderPane
         val canvas = Canvas(WIDTH.toDouble(), HEIGHT.toDouble())
-        root.children.add(canvas)
+        borderPane.center = canvas
 
+        // Add buttons to the bottom of the BorderPane
+        val buttonsHBox = HBox()
+
+        buttonsHBox.spacing = 10.0
+        buttonsHBox.padding = Insets(10.0)
+
+        val startButton = Button("Start")
+        startButton.setOnMouseClicked {
+            rec_x += 20.0
+        }
+
+        val stopButton = Button("Stop")
+        stopButton.setOnMouseClicked {
+            rec_y += 20.0
+        }
+
+        buttonsHBox.children.addAll(
+            startButton,
+            stopButton,
+        )
+        borderPane.bottom = buttonsHBox
+
+        // Actions handlers
         prepareActionHandlers()
 
         graphicsContext = canvas.graphicsContext2D
@@ -68,11 +101,16 @@ class Game : Application() {
 
         // clear canvas
         graphicsContext.clearRect(0.0, 0.0, WIDTH.toDouble(), HEIGHT.toDouble())
+
         // draw background
-        mainScene.fill = Color.GRAY
+        graphicsContext.fill = Color.GRAY
+        graphicsContext.fillRect(0.0, 0.0, WIDTH.toDouble(), HEIGHT.toDouble())
+
         // perform world updates
 
-        // draw sun
+        // draw
+        graphicsContext.fill = Color.AQUA
+        graphicsContext.fillRect(rec_x, rec_y, 30.0, 30.0)
 
         // display crude fps counter
         val elapsedMs = elapsedNanos / 1_000_000
