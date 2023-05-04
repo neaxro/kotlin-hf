@@ -1,4 +1,4 @@
-package com.example
+package com.gameoflife
 
 import javafx.animation.AnimationTimer
 import javafx.application.Application
@@ -22,19 +22,13 @@ class Game : Application() {
     private lateinit var mainScene: Scene
     private lateinit var graphicsContext: GraphicsContext
 
-    private lateinit var space: Image
-    private lateinit var sun: Image
-
-    private var sunX = WIDTH / 2
-    private var sunY = HEIGHT / 2
-
     private var lastFrameTime: Long = System.nanoTime()
 
     // use a set so duplicates are not possible
     private val currentlyActiveKeys = mutableSetOf<KeyCode>()
 
     override fun start(mainStage: Stage) {
-        mainStage.title = "Event Handling"
+        mainStage.title = "Game of life"
 
         val root = Group()
         mainScene = Scene(root)
@@ -46,8 +40,6 @@ class Game : Application() {
         prepareActionHandlers()
 
         graphicsContext = canvas.graphicsContext2D
-
-        loadGraphics()
 
         // Main loop
         object : AnimationTimer() {
@@ -68,13 +60,6 @@ class Game : Application() {
         }
     }
 
-    private fun loadGraphics() {
-        // prefixed with / to indicate that the files are
-        // in the root of the "resources" folder
-        space = Image(getResource("/space.png"))
-        sun = Image(getResource("/sun.png"))
-    }
-
     private fun tickAndRender(currentNanoTime: Long) {
         // the time elapsed since the last frame, in nanoseconds
         // can be used for physics calculation, etc
@@ -83,15 +68,11 @@ class Game : Application() {
 
         // clear canvas
         graphicsContext.clearRect(0.0, 0.0, WIDTH.toDouble(), HEIGHT.toDouble())
-
         // draw background
-        graphicsContext.drawImage(space, 0.0, 0.0)
-
+        mainScene.fill = Color.GRAY
         // perform world updates
-        updateSunPosition()
 
         // draw sun
-        graphicsContext.drawImage(sun, sunX.toDouble(), sunY.toDouble())
 
         // display crude fps counter
         val elapsedMs = elapsedNanos / 1_000_000
@@ -100,20 +81,4 @@ class Game : Application() {
             graphicsContext.fillText("${1000 / elapsedMs} fps", 10.0, 10.0)
         }
     }
-
-    private fun updateSunPosition() {
-        if (currentlyActiveKeys.contains(KeyCode.LEFT)) {
-            sunX--
-        }
-        if (currentlyActiveKeys.contains(KeyCode.RIGHT)) {
-            sunX++
-        }
-        if (currentlyActiveKeys.contains(KeyCode.UP)) {
-            sunY--
-        }
-        if (currentlyActiveKeys.contains(KeyCode.DOWN)) {
-            sunY++
-        }
-    }
-
 }
