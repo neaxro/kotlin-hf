@@ -8,6 +8,7 @@ import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.control.Button
+import javafx.scene.control.ComboBox
 import javafx.scene.control.Slider
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
@@ -31,7 +32,7 @@ class Game : Application() {
 
     private var lastFrameTime: Long = System.nanoTime()
     private var elapsedSeconds: Double = 0.0
-    private var simulateSleep: Double = 1.0     // Seconds
+    private var simulateSleep: Double = 1.0     // Seconds, threshold for the next simulation
     private val stepText: Text = Text(String.format("Steps: %d", 0))
 
     // use a set so duplicates are not possible
@@ -59,10 +60,8 @@ class Game : Application() {
         addControllersToBottom(buttonsHBox)
         borderPane.bottom = buttonsHBox
 
-        // Actions handlers
-        prepareActionHandlers()
-
         graphicsContext = canvas.graphicsContext2D
+
         // Canvas on click listener
         canvas.setOnMouseClicked {
             if(it.isControlDown)
@@ -81,15 +80,6 @@ class Game : Application() {
         mainStage.show()
     }
 
-    private fun prepareActionHandlers() {
-        mainScene.onKeyPressed = EventHandler { event ->
-            currentlyActiveKeys.add(event.code)
-        }
-        mainScene.onKeyReleased = EventHandler { event ->
-            currentlyActiveKeys.remove(event.code)
-        }
-    }
-
     private fun tickAndRender(currentNanoTime: Long) {
         // the time elapsed since the last frame, in nanoseconds
         // can be used for physics calculation, etc
@@ -105,7 +95,6 @@ class Game : Application() {
 
         // perform world updates
         elapsedSeconds += elapsedNanos * 10e-9
-        // println("[ELAPSED SECONDS] $elapsedSeconds")
         if(elapsedSeconds > simulateSleep){
             universe.simulate()
             elapsedSeconds = 0.0
@@ -123,6 +112,7 @@ class Game : Application() {
     }
 
     private fun addControllersToBottom(hBox: HBox){
+
         val simulateButton = Button("Start")
         simulateButton.setOnMouseClicked {
             universe.isSimulating = !universe.isSimulating
@@ -159,13 +149,32 @@ class Game : Application() {
             simulateTimerText.text = String.format("%.1f", simulateSleep)
         }
 
+        val comboBox = ComboBox(universe.showLevelFiles())
+        if(comboBox.items.isNotEmpty()){
+            comboBox.value = comboBox.items[0]
+        }
+
+        val loadButton = Button("Load")
+        loadButton.setOnMouseClicked {
+            universe.loadUniverse(comboBox.value)
+        }
+
+        val saveButton = Button("Save")
+        saveButton.setOnMouseClicked {
+            universe.saveUniverse(comboBox)
+        }
+
+        // Add all of the controllers to the layout
         hBox.children.addAll(
             simulateButton,
             clearButton,
             stepperButton,
+            saveButton,
             simulateTimeSlider,
             simulateTimerText,
-            stepText
+            stepText,
+            comboBox,
+            loadButton
         )
     }
 }

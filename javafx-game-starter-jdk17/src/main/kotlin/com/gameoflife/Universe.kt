@@ -1,8 +1,10 @@
 package com.gameoflife
 
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.control.ComboBox
 import javafx.scene.text.Text
-import java.util.Random
 import kotlin.math.floor
 import kotlin.properties.Delegates
 
@@ -12,6 +14,8 @@ class Universe(
     private val stepText: Text? = null
 ) {
     private val cells = mutableListOf<Cell>()
+    private var loader: UniverseLoader = UniverseLoader()
+
     var isSimulating: Boolean = false
     var simulatingStep: Long by Delegates.observable(0){property, oldValue, newValue ->
         stepText?.text = String.format("Steps: %d", newValue)
@@ -117,6 +121,9 @@ class Universe(
         simulatingStep = 0
     }
 
+    // Two phase simulation
+    // 1. Calc new State
+    // 2. Set new State
     fun simulate(){
         if(!isSimulating) return
 
@@ -136,5 +143,23 @@ class Universe(
         }
 
         simulatingStep++
+    }
+
+    fun saveUniverse(comboBox: ComboBox<String>) {
+        if(isSimulating) return
+
+        loader.saveLevel(cells)
+        reloadFiles(comboBox)
+    }
+    fun loadUniverse(levelName: String){
+        if(isSimulating) return
+        loader.loadLevel(levelName, cells)
+    }
+    private fun reloadFiles(comboBox: ComboBox<String>){
+        val levels = FXCollections.observableList<String>(loader.getLevelFileNames())
+        comboBox.items = levels
+    }
+    fun showLevelFiles(): ObservableList<String>{
+        return FXCollections.observableList<String>(loader.getLevelFileNames())
     }
 }

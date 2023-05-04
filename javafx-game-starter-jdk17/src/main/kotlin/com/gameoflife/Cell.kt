@@ -3,9 +3,8 @@ package com.gameoflife
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 
-enum class State(boolean: Boolean){
-    Alive(true),
-    Death(false)
+enum class State(){
+    Alive, Death
 }
 
 class Cell(
@@ -19,9 +18,8 @@ class Cell(
         val COLOR_DEATH: Color = Color.WHITE
     }
 
-    var state: State
-        private set
-    private var newState: State
+    var state: State            // current state
+    private var newState: State // calculated new state
 
     init {
         this.state = state
